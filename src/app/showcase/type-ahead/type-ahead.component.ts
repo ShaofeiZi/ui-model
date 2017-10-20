@@ -10,9 +10,11 @@ export class TypeAheadComponent {
   constructor(private sanitizer: DomSanitizer) {
     this.originItems.forEach((item) => {
       item['format'] = () => {
+        // 返回html
         return this.sanitizer.bypassSecurityTrustHtml(`<label onclick="alert(1)">${item.name}</label> - <code>${item.value}</code>`);
       };
       item['parse'] = () => {
+        // 返回数据
         return item.name;
       };
 

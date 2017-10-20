@@ -27,13 +27,37 @@ export class TypeAheadComponent<T extends { format?: Supplier<SafeHtml>, parse?:
 
   checker = new Subject();
 
+  term = '';
+  _value: T;
+  sub: Subscription;
+
   @Input() items: T[];
   @Input() displayField = 'name';
   @Input() placeholder = '-';
+  @Input() disabled = false;
   @Input() formatter: Transformer<any, SafeHtml> = this.defaultFormatter.bind(this);
   @Input() parser: Transformer<any, string> = this.defaultParser.bind(this);
   @Output() search = new EventEmitter<string>();
 
+
+  get value(): T {
+    return this._value;
+  }
+
+  set value(value: T) {
+    this._value = value;
+    this.term = value && this.parser(value);
+  }
+
+  _change: (value: T) => void;
+  _touched: () => void;
+
+  protected changed(): void {
+    if (this._change) {
+      this._change(this.value);
+    }
+  }
+  // 下拉菜单
   defaultFormatter(value: T): string | SafeHtml {
     if (!value) {
       return '';
@@ -45,7 +69,7 @@ export class TypeAheadComponent<T extends { format?: Supplier<SafeHtml>, parse?:
       return value[this.displayField];
     }
   };
-
+  // 默认解析器
   defaultParser(value: T): string {
     if (!value) {
       return '';
@@ -56,8 +80,6 @@ export class TypeAheadComponent<T extends { format?: Supplier<SafeHtml>, parse?:
       return value[this.displayField];
     }
   }
-
-  sub: Subscription;
 
   ngOnInit(): void {
     this.sub = this.checker.asObservable()
@@ -76,26 +98,6 @@ export class TypeAheadComponent<T extends { format?: Supplier<SafeHtml>, parse?:
     this.sub.unsubscribe();
   }
 
-  term = '';
-  _value: T;
-  get value(): T {
-    return this._value;
-  }
-
-  set value(value: T) {
-    this._value = value;
-    this.term = value && this.parser(value);
-  }
-
-  _change: (value: T) => void;
-  _touched: () => void;
-
-  protected changed(): void {
-    if (this._change) {
-      this._change(this.value);
-    }
-  }
-
   writeValue(value: T): void {
     this.value = value;
   }
@@ -108,12 +110,10 @@ export class TypeAheadComponent<T extends { format?: Supplier<SafeHtml>, parse?:
     this._touched = fn;
   }
 
-  @Input() disabled = false;
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
-
 
   select(item: T): void {
     this.value = item;

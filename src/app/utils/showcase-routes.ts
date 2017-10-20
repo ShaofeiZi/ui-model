@@ -364,7 +364,7 @@ export const showcaseRoutes: Route[] = [
     path: 'type-ahead',
     component: TypeAheadComponent,
     data: {
-      title: 'Type-ahead',
+      title: '自动完成（输入提示）Type-ahead',
       tags: ['type-ahead', 'autocomplete', 'search'].map(Tag.of),
       description: '`type-ahead` is composed of `toggle` and a helper directive',
       authors: ['wzc'].map(Author.of),
